@@ -63,6 +63,31 @@ public class MessageDAO {
         return messages;
     }
 
+    public List<Message> getAllMessages(int targetPostedByID) {
+        Connection connection = ConnectionUtil.getConnection();
+        List<Message> foundMessages = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM message WHERE posted_by = ?";  
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, targetPostedByID);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Message curMessage = new Message(rs.getInt("message_id"), rs.getInt("posted_by"), rs.getString("message_text"), rs.getLong("time_posted_epoch") );
+                foundMessages.add(curMessage);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return foundMessages;
+    }
+
+    /**
+     * Get a message according to a given message ID
+     * 
+     * @param targetMessageID
+     * @return Message if found (null if not found)
+     */
     public Message getMessage(int targetMessageID) {
         Connection connection = ConnectionUtil.getConnection();
         Message foundMessage = null;
@@ -80,6 +105,47 @@ public class MessageDAO {
 
         return foundMessage;
     }
+
+    // UPDATE //////////////////////////
+
+    /**
+     * Update a Message Text for message associated with given Message ID
+     * 
+     * @param targetMessageID
+     * @param targetMessageText
+     * @return Updated Message if update was successful (null if update failed)
+     */
+    public Message updateMessageText(int targetMessageID, String targetMessageText) {
+        Message updatedMessage = null;
+        try {
+            Connection connection = ConnectionUtil.getConnection();
+            // Update Message
+            String sql = "UPDATE message SET message_text = ? WHERE message_id = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, targetMessageText);
+            ps.setInt(2, targetMessageID);
+            int wasUpdated = ps.executeUpdate();
+
+            if (wasUpdated >= 1) {
+                // Retrieve updated Message
+                String sql2 = "Select * FROM message WHERE message_id = ?";
+                PreparedStatement ps2 = connection.prepareStatement(sql2);
+                ps2.setInt(1, targetMessageID);
+                ResultSet rs = ps2.executeQuery();
+                if (rs.next()) {
+                    updatedMessage = new Message(rs.getInt("message_id"), rs.getInt("posted_by"), rs.getString("message_text"), rs.getLong("time_posted_epoch"));
+                }
+            } else {
+                // Message Update failed
+                updatedMessage = null;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return updatedMessage;
+    }
+
+    // DELETE //////////////////////////
 
     /**
      * Deletes a message according to its message ID

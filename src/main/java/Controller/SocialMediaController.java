@@ -58,7 +58,12 @@ public class SocialMediaController {
         // Get Message by Message ID
         app.get("/messages/{message_id}", this::getMessageByIDHandler);
 
+        // Get All Messages by Acount ID
+        app.get("/accounts/{account_id}/messages", this::getAllMessagersByAccountIDHandler);
+
         // **** Update ********
+
+        app.patch("/messages/{message_id}", this::updateMessageTextByMessageIDHandler);
         
         // **** Delete ********
 
@@ -152,6 +157,38 @@ public class SocialMediaController {
             ctx.result("");
         }
         ctx.status(200);
+    }
+
+    /**
+     * Get All Messages according to account id
+     * 
+     * @param ctx
+     */
+    private void getAllMessagersByAccountIDHandler (Context ctx) {
+        int targetAccountID = Integer.parseInt(ctx.pathParam("account_id"));
+        List<Message> foundMessages = messageService.getAllMessages(targetAccountID);
+        ctx.json(foundMessages);
+        // ctx.result("Account id retrieved: " + targetAccountID);
+        ctx.status(200);
+    }
+
+    // **** Update ********
+
+    private void updateMessageTextByMessageIDHandler (Context ctx) throws JsonProcessingException {
+        int targetMessageID = Integer.parseInt(ctx.pathParam("message_id"));
+        ObjectMapper oMapper = new ObjectMapper();
+        Message messageToUpdate = oMapper.readValue(ctx.body(), Message.class);
+        messageToUpdate.setMessage_id(targetMessageID);
+        Message updatedMessage = this.messageService.updateMessageText(targetMessageID, messageToUpdate.getMessage_text());
+        if (updatedMessage != null) {
+            // Message update succesful
+            ctx.json(updatedMessage);
+            ctx.status(200);
+        } else {
+            // Message update failed
+            ctx.result("");
+            ctx.status(400);
+        }
     }
 
     // **** Delete ********

@@ -62,6 +62,37 @@ public class MessageService {
         return this.messageDAO.getMessage(targetMessageID);
     }
 
+    /**
+     * Find all messages posted by given account id
+     * 
+     * @param targetAccountID
+     * @return List of Messages
+     */
+    public List<Message> getAllMessages(int targetAccountID) {
+        return this.messageDAO.getAllMessages(targetAccountID);
+    }
+
+    // Update ////////////////////////
+
+    public Message updateMessageText(int targetMessageID, String newMessageText) {
+        // Check Validations
+        // Check that message already exists
+        if (this.getMessage(targetMessageID) == null) {
+            return null;
+        }
+        // Check that message text is not blank
+        if (newMessageText == null || newMessageText.length() < 1) {
+            return null;
+        }
+        // Check that message text is not over 255 characters
+        if (newMessageText.length() > 255 ) {
+            return null;
+        }
+
+        // Execute update
+        return this.messageDAO.updateMessageText(targetMessageID, newMessageText);
+    }
+
     // Delete ////////////////////////
 
     public Message deleteMessage(int targetMessageID) {
