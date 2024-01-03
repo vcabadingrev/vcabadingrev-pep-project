@@ -62,6 +62,8 @@ public class SocialMediaController {
         
         // **** Delete ********
 
+        app.delete("/messages/{message_id}", this::deleteMessageHandler);
+
         return app;
     }
 
@@ -146,6 +148,19 @@ public class SocialMediaController {
         // ctx.result("Message ID received: " + ctx.pathParam("message_id"));
         if (foundMessage != null) {
             ctx.json(foundMessage);
+        } else {
+            ctx.result("");
+        }
+        ctx.status(200);
+    }
+
+    // **** Delete ********
+
+    private void deleteMessageHandler (Context ctx) {
+        int targetMessageID = Integer.parseInt(ctx.pathParam("message_id"));
+        Message deletedMessage = messageService.deleteMessage(targetMessageID);
+        if (deletedMessage != null) {
+            ctx.json(deletedMessage);
         } else {
             ctx.result("");
         }

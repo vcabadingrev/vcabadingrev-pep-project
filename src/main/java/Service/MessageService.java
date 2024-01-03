@@ -62,4 +62,16 @@ public class MessageService {
         return this.messageDAO.getMessage(targetMessageID);
     }
 
+    // Delete ////////////////////////
+
+    public Message deleteMessage(int targetMessageID) {
+        // Verify if message exists
+        Message targetMessage = getMessage(targetMessageID);
+        if (targetMessage == null) {
+            return null;
+        }
+        Message deletedMessage = this.messageDAO.deleteMessage(targetMessage);
+        return deletedMessage;
+    }
+
 }
