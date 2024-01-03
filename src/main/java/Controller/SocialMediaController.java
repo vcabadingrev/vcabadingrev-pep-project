@@ -116,7 +116,14 @@ public class SocialMediaController {
     }
 
     private void getMessageByIDHandler(Context ctx) {
-        ctx.result("Message ID received: " + ctx.pathParam("message_id"));
+        int targetMessageID = Integer.parseInt(ctx.pathParam("message_id")) ;
+        Message foundMessage = messageService.getMessage(targetMessageID);
+        // ctx.result("Message ID received: " + ctx.pathParam("message_id"));
+        if (foundMessage != null) {
+            ctx.json(foundMessage);
+        } else {
+            ctx.result("");
+        }
         ctx.status(200);
     }
 }

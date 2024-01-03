@@ -23,10 +23,14 @@ public class MessageService {
         this.messageDAO = newMessageDAO;
     }
 
-    // Retrieve
+    // Retrieve //////////////////////
 
     public List<Message> getAllMessages() {
         return this.messageDAO.getAllMessages();
+    }
+
+    public Message getMessage(int targetMessageID) {
+        return this.messageDAO.getMessage(targetMessageID);
     }
 
 }
