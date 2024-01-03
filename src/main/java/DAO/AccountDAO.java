@@ -62,4 +62,22 @@ public class AccountDAO {
         }
         return foundAccount;
     }
+
+    public Account geAccount(int targetAccountID) {
+        Connection connection = ConnectionUtil.getConnection();
+        Account foundAccount = null;
+        try {
+            String sql = "SELECT * FROM account WHERE account_id = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, targetAccountID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                foundAccount = new Account(rs.getInt("account_id"), rs.getString("username"), rs.getString("password"));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return foundAccount;
+    }
 }

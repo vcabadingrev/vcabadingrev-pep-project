@@ -9,6 +9,36 @@ import java.sql.*;
 
 public class MessageDAO {
     
+    // CREATE //////////////////////////
+
+    /**
+     * Insert new message into database
+     * 
+     * @param newMessage
+     * @return posted message if successful
+     */
+    public Message addMessage (Message newMessage) {
+        Connection connection = ConnectionUtil.getConnection();
+        Message postedMessage = null;
+        try {
+            String sql = "INSERT INTO message (posted_by, message_text, time_posted_epoch) VALUES (?, ?, ?)";
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setInt(1, newMessage.getPosted_by());
+            ps.setString(2, newMessage.getMessage_text());
+            ps.setLong(3, newMessage.getTime_posted_epoch());
+            ps.executeUpdate();
+            ResultSet pkeyResultSet = ps.getGeneratedKeys();
+            if (pkeyResultSet.next()) {
+                int generatedMessageId = (int) pkeyResultSet.getLong(1);
+                postedMessage = new Message(generatedMessageId, newMessage.getPosted_by(), newMessage.getMessage_text(), newMessage.getTime_posted_epoch());
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return postedMessage;
+    }
+
     // RETRIEVE ////////////////////////
 
     /**

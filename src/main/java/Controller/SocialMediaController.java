@@ -48,6 +48,7 @@ public class SocialMediaController {
         // MESSAGES ////////////////////////
         
         // **** Create ********
+        app.post("/messages", this::addMessageHandler);
 
         // **** Retrieve ********
 
@@ -109,6 +110,30 @@ public class SocialMediaController {
     }
 
     // MESSAGES //////////////////////////////////////
+
+    // **** Create ********
+
+    /**
+     * Insert a message
+     * @param ctx
+     */
+    private void addMessageHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper oMapper = new ObjectMapper();
+        Message newMessage = oMapper.readValue(ctx.body(), Message.class);
+        ctx.json(newMessage);
+        Message postedMessage = messageService.addMessage(newMessage);
+        if (postedMessage != null) {
+            // Successfully inserted message
+            ctx.json(postedMessage);
+            ctx.status(200);
+        } else {
+            ctx.result("");
+            ctx.status(400);
+        }
+        // ctx.result("In add message handler");
+    }
+
+    // **** Retrieve *******
 
     private void getAllMessagessHandler(Context ctx) {
         List<Message> messages = messageService.getAllMessages();

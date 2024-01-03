@@ -57,6 +57,19 @@ public class AccountService {
         return false;
     }
 
+    /**
+     * Check if account exists
+     * 
+     * @param targetAccountID
+     * @return true if account found in database
+     */
+    public boolean checkAccountExist(int targetAccountID) {
+        if (this.accountDAO.geAccount(targetAccountID) != null) {
+            return true;
+        }
+        return false;
+    }
+
     public Account getAccount(String targetUsername, String targetPassword) {
         Account foundAccount = accountDAO.getAccount(targetUsername, targetPassword);
         return foundAccount;
